@@ -1,0 +1,7 @@
+C:\Users\19603\Desktop\新建文件夹\文件查重.pdb
+C:\Users\19603\Desktop\新建文件夹\D3DCompiler_47_cor3.dll
+C:\Users\19603\Desktop\新建文件夹\PenImc_cor3.dll
+C:\Users\19603\Desktop\新建文件夹\PresentationNative_cor3.dll
+C:\Users\19603\Desktop\新建文件夹\vcruntime140_cor3.dll
+C:\Users\19603\Desktop\新建文件夹\wpfgfx_cor3.dll
+C:\Users\19603\Desktop\新建文件夹\文件查重.exe

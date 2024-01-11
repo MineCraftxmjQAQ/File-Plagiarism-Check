@@ -1,0 +1,7 @@
+C:\Users\19603\Desktop\文件查重V1.7.4\发布的应用程序\文件查重V1.7.4-x64-独立\文件查重.pdb
+C:\Users\19603\Desktop\文件查重V1.7.4\发布的应用程序\文件查重V1.7.4-x64-独立\D3DCompiler_47_cor3.dll
+C:\Users\19603\Desktop\文件查重V1.7.4\发布的应用程序\文件查重V1.7.4-x64-独立\PenImc_cor3.dll
+C:\Users\19603\Desktop\文件查重V1.7.4\发布的应用程序\文件查重V1.7.4-x64-独立\PresentationNative_cor3.dll
+C:\Users\19603\Desktop\文件查重V1.7.4\发布的应用程序\文件查重V1.7.4-x64-独立\vcruntime140_cor3.dll
+C:\Users\19603\Desktop\文件查重V1.7.4\发布的应用程序\文件查重V1.7.4-x64-独立\wpfgfx_cor3.dll
+C:\Users\19603\Desktop\文件查重V1.7.4\发布的应用程序\文件查重V1.7.4-x64-独立\文件查重.exe

@@ -1,0 +1,5 @@
+C:\Users\19603\Desktop\移动文件夹\文件查重.exe
+C:\Users\19603\Desktop\移动文件夹\文件查重.dll
+C:\Users\19603\Desktop\移动文件夹\文件查重.deps.json
+C:\Users\19603\Desktop\移动文件夹\文件查重.runtimeconfig.json
+C:\Users\19603\Desktop\移动文件夹\文件查重.pdb
