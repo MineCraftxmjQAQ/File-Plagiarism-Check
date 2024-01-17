@@ -16,7 +16,7 @@ Public Class Form1
     Public Shared Function Everything_GetNumResults() As UInt32
     End Function
     <DllImport("Everything64.dll", EntryPoint:="Everything_GetResultFullPathNameW", CharSet:=CharSet.Unicode, SetLastError:=True)>
-    Public Shared Function Everything_GetResultFullPathNameW(index As UInt32, buf As System.Text.StringBuilder, size As UInt32) As UInt32
+    Public Shared Function Everything_GetResultFullPathNameW(index As UInt32, buf As StringBuilder, size As UInt32) As UInt32
     End Function
     Public Const UppLim = 1000000
     Public Const EVERYTHING_REQUEST_FULL_PATH_AND_FILE_NAME = &H4
@@ -142,7 +142,7 @@ Public Class Form1
                 If RawCount = UppLim Then
                     ListBox4.Items.Add(Now + "文件导入个数大于一百万,程序已停止导入,后续操作仅面向已列表的文件")
                     ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
-                    MsgBox("文件导入个数大于一百万,程序已停止导入,后续操作仅面向已列表的文件", 0 + vbExclamation + vbYesNo, "文件导入个数过多")
+                    MsgBox("文件导入个数大于一百万,程序已停止导入,后续操作仅面向已列表的文件", 0 + vbExclamation, "警告")
                     Exit For
                 End If
             End If
@@ -312,7 +312,7 @@ Public Class Form1
                     Try
                         Dim HashValueCalculationThread As New HashValueCalculation With {
                             .sn = i,
-                            .sn_filestream = File.Open(FolderPath + HandleData(i), FileMode.Open)
+                            .sn_filestream = File.Open(FolderPath + HandleData(i), FileMode.Open, FileAccess.Read, FileShare.Read)
                         }
                         HashValueCalculationArray(i) = HashValueCalculationThread
                         ThreadState(i) = Task.Run(AddressOf HashValueCalculationThread.ThreadWork)
@@ -323,7 +323,14 @@ Public Class Form1
                     End Try
                 End If
             Next i
-            Task.WaitAll(ThreadState)
+            Try
+                Task.WaitAll(ThreadState)
+            Catch ex As Exception
+                ListBox4.Items.Add(Now + "错误:等待全部线程完成失败,程序中止")
+                ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
+                MsgBox("错误:等待全部线程完成失败,程序中止", 0 + vbCritical + vbSystemModal, "等待全部线程完成失败")
+                Exit Sub
+            End Try
             ListBox3.Items.Add(Now + "|第二轮查重对比数据(SHA1校验值)列表如下:")
             For i = 0 To HandleCount
                 Hash_Data(i) = HashValueCalculationArray(i).sn_hashresult
@@ -410,15 +417,15 @@ Public Class Form1
                 ListBox3.Items.Add("未找到重复文件")
                 ListBox4.Items.Add(Now + "未找到重复文件")
                 ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
-                Button3.Enabled = False
                 MsgBox("未找到重复文件", 0 + vbInformation + vbSystemModal, "查重")
+                Button3.Enabled = False
             End If
         Else
             ListBox2.Items.Add("未找到重复文件")
             ListBox4.Items.Add(Now + "未找到重复文件")
             ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
-            Button3.Enabled = False
             MsgBox("未找到重复文件", 0 + vbInformation + vbSystemModal, "查重")
+            Button3.Enabled = False
         End If
         For i = 0 To UppLim - 1
             Hash_Data(i) = ""
@@ -762,9 +769,9 @@ Public Class Form1
                 My.Computer.FileSystem.WriteAllText(OutputPath + FolderTime, vbCrLf, True)
             Next i
         Catch ex As Exception
-            MsgBox("错误:导出数据写入失败,请检查路径写入权限", 0 + vbCritical + vbSystemModal, "导出数据写入失败")
             ListBox4.Items.Add(Now + "导出数据写入失败,请检查路径写入权限")
             ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
+            MsgBox("错误:导出数据写入失败,请检查路径写入权限", 0 + vbCritical + vbSystemModal, "导出数据写入失败")
             Button7.Enabled = True
             Exit Sub
         End Try
@@ -802,7 +809,7 @@ Public Class Form1
                     vbCrLf + vbCrLf + "V1.6.0" + vbCrLf + "程序编写环境由Visual Basic 6.0移动至VB.NET" + vbCrLf + "代码和界面全部重写,优化程序运行响应速度、稳定性和容错率" + vbCrLf + "修改打开文件夹方式,合并两次查重过程,优化程序操作逻辑" + vbCrLf + "新增分组移动全部重复文件功能" + vbCrLf + "新增删除全部重复文件功能" + vbCrLf + "新增实时状态栏功能" +
                     vbCrLf + vbCrLf + "V1.5.1" + vbCrLf + "修复V1.5.0版本移动重复文件发生文件移动不完全或文件破损问题" +
                     vbCrLf + vbCrLf + "V1.5.0" + vbCrLf + "新增文件大小查重功能" + vbCrLf + "新增移动全部重复文件功能" +
-                    vbCrLf + vbCrLf + "V1.0.0" + vbCrLf + "初代版本", vbInformation + vbSystemModal, "程序更新日志")
+                    vbCrLf + vbCrLf + "V1.0.0" + vbCrLf + "初代版本", 0 + vbInformation + vbSystemModal, "程序更新日志")
     End Sub
     Private Shared Function Boo_DirExist(StrPath As String) As Boolean
         Boo_DirExist = Directory.Exists(StrPath)

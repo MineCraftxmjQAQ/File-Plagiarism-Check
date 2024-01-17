@@ -385,7 +385,7 @@
         Next i
         Form1.ListBox4.Items.Add(Now + "选择保留文件结果保存成功")
         Form1.ListBox4.SelectedItem = Form1.ListBox4.Items(Form1.ListBox4.Items.Count - 1)
-        Result = MsgBox("即将退出选择保留文件界面,请在确认保留结果无误后点击<是(Y)>" + vbCrLf + "注意:每次进入选择保留文件界面时会清除上一次的保留结果", vbYesNo + vbExclamation, "警告")
+        Result = MsgBox("即将退出选择保留文件界面,请在确认保留结果无误后点击<是(Y)>" + vbCrLf + "注意:每次进入选择保留文件界面时会清除上一次的保留结果", 0 + vbExclamation + vbYesNo, "警告")
         If Result = vbYes Then
             Form1.Button1.Enabled = True
             Form1.Button2.Enabled = True
