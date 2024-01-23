@@ -19,8 +19,6 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Button9 = New Button()
-        Button8 = New Button()
         Button7 = New Button()
         Button6 = New Button()
         Button5 = New Button()
@@ -33,31 +31,13 @@ Partial Class Form1
         Button2 = New Button()
         Button1 = New Button()
         FolderBrowserDialog1 = New FolderBrowserDialog()
-        Button10 = New Button()
+        ComboBox1 = New ComboBox()
         SuspendLayout()
-        ' 
-        ' Button9
-        ' 
-        Button9.Location = New Point(1233, 12)
-        Button9.Name = "Button9"
-        Button9.Size = New Size(90, 24)
-        Button9.TabIndex = 28
-        Button9.Text = "关于文件查重"
-        Button9.UseVisualStyleBackColor = True
-        ' 
-        ' Button8
-        ' 
-        Button8.Location = New Point(1137, 12)
-        Button8.Name = "Button8"
-        Button8.Size = New Size(90, 24)
-        Button8.TabIndex = 27
-        Button8.Text = "程序使用说明"
-        Button8.UseVisualStyleBackColor = True
         ' 
         ' Button7
         ' 
         Button7.Enabled = False
-        Button7.Location = New Point(588, 12)
+        Button7.Location = New Point(774, 12)
         Button7.Name = "Button7"
         Button7.Size = New Size(90, 24)
         Button7.TabIndex = 26
@@ -67,7 +47,7 @@ Partial Class Form1
         ' Button6
         ' 
         Button6.Enabled = False
-        Button6.Location = New Point(492, 12)
+        Button6.Location = New Point(678, 12)
         Button6.Name = "Button6"
         Button6.Size = New Size(90, 24)
         Button6.TabIndex = 25
@@ -77,7 +57,7 @@ Partial Class Form1
         ' Button5
         ' 
         Button5.Enabled = False
-        Button5.Location = New Point(396, 12)
+        Button5.Location = New Point(582, 12)
         Button5.Name = "Button5"
         Button5.Size = New Size(90, 24)
         Button5.TabIndex = 24
@@ -87,7 +67,7 @@ Partial Class Form1
         ' Button4
         ' 
         Button4.Enabled = False
-        Button4.Location = New Point(300, 12)
+        Button4.Location = New Point(486, 12)
         Button4.Name = "Button4"
         Button4.Size = New Size(90, 24)
         Button4.TabIndex = 23
@@ -107,7 +87,7 @@ Partial Class Form1
         ' Button3
         ' 
         Button3.Enabled = False
-        Button3.Location = New Point(204, 12)
+        Button3.Location = New Point(390, 12)
         Button3.Name = "Button3"
         Button3.Size = New Size(90, 24)
         Button3.TabIndex = 21
@@ -163,22 +143,23 @@ Partial Class Form1
         Button1.Text = "打开文件夹"
         Button1.UseVisualStyleBackColor = True
         ' 
-        ' Button10
+        ' ComboBox1
         ' 
-        Button10.Location = New Point(1329, 12)
-        Button10.Name = "Button10"
-        Button10.Size = New Size(90, 24)
-        Button10.TabIndex = 29
-        Button10.Text = "程序更新日志"
-        Button10.UseVisualStyleBackColor = True
+        ComboBox1.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBox1.Enabled = False
+        ComboBox1.FormattingEnabled = True
+        ComboBox1.Items.AddRange(New Object() {"SHA1校验值计算模式:单线程", "SHA1校验值计算模式:多线程"})
+        ComboBox1.Location = New Point(204, 11)
+        ComboBox1.Name = "ComboBox1"
+        ComboBox1.Size = New Size(180, 25)
+        ComboBox1.TabIndex = 30
         ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 17F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1431, 714)
-        Controls.Add(Button9)
-        Controls.Add(Button8)
+        Controls.Add(ComboBox1)
         Controls.Add(Button7)
         Controls.Add(Button6)
         Controls.Add(Button5)
@@ -190,7 +171,6 @@ Partial Class Form1
         Controls.Add(ListBox1)
         Controls.Add(Button2)
         Controls.Add(Button1)
-        Controls.Add(Button10)
         FormBorderStyle = FormBorderStyle.FixedSingle
         MaximizeBox = False
         Name = "Form1"
@@ -198,8 +178,6 @@ Partial Class Form1
         Text = "文件查重V2.0.0"
         ResumeLayout(False)
     End Sub
-    Friend WithEvents Button9 As Button
-    Friend WithEvents Button8 As Button
     Friend WithEvents Button7 As Button
     Friend WithEvents Button6 As Button
     Friend WithEvents Button5 As Button
@@ -212,5 +190,5 @@ Partial Class Form1
     Friend WithEvents Button2 As Button
     Friend WithEvents Button1 As Button
     Friend WithEvents FolderBrowserDialog1 As FolderBrowserDialog
-    Friend WithEvents Button10 As Button
+    Friend WithEvents ComboBox1 As ComboBox
 End Class

@@ -393,6 +393,7 @@
             Form1.Button4.Enabled = True
             Form1.Button5.Enabled = True
             Form1.Button6.Enabled = True
+            Form1.ComboBox1.Enabled = True
             e.Cancel = False
         Else
             e.Cancel = True

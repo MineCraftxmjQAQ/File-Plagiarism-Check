@@ -35,6 +35,7 @@ Public Class Form1
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         FolderPath = ""
         RawCount = 0
+        ComboBox1.SelectedIndex = 0
         ListBox4.Items.Add(Now + "请选择查重文件夹路径")
         ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
     End Sub
@@ -49,6 +50,7 @@ Public Class Form1
             Button5.Enabled = False
             Button6.Enabled = False
             Button7.Enabled = False
+            ComboBox1.Enabled = False
         Else
             ListBox4.Items.Add(Now + "已取消查重文件夹路径选择")
             ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
@@ -65,6 +67,7 @@ Public Class Form1
         Button5.Enabled = False
         Button6.Enabled = False
         Button7.Enabled = False
+        ComboBox1.Enabled = False
         Form2.Close()
         ListBox1.Items.Clear()
         ListBox2.Items.Clear()
@@ -163,6 +166,7 @@ Public Class Form1
             MsgBox("该文件夹下没有文件", 0 + vbInformation + vbSystemModal, "文件查重")
         Else
             Button3.Enabled = True
+            ComboBox1.Enabled = True
         End If
     End Sub
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -181,6 +185,7 @@ Public Class Form1
         Button5.Enabled = False
         Button6.Enabled = False
         Button7.Enabled = False
+        ComboBox1.Enabled = False
         ListBox2.Items.Clear()
         ListBox3.Items.Clear()
         ListBox4.Items.Add(Now + "开始获取全部列表文件大小")
@@ -302,35 +307,63 @@ Public Class Form1
             temp = 0
             tmp = 0
             shatmp = 0
-            Dim ThreadState() As Task = New Task(HandleCount) {}
-            For i = 0 To HandleCount
-                If File.Exists(FolderPath + HandleData(i)) = False Then
-                    Hash_Data(i) = "Error_" + CStr(i + 1)
-                    ListBox4.Items.Add(Now + "错误:文件" + HandleData(i) + "文件路径获取失败,文件不存在")
-                    ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
-                Else
-                    Try
-                        Dim HashValueCalculationThread As New HashValueCalculation With {
-                            .sn = i,
-                            .sn_filestream = File.Open(FolderPath + HandleData(i), FileMode.Open, FileAccess.Read, FileShare.Read)
-                        }
-                        HashValueCalculationArray(i) = HashValueCalculationThread
-                        ThreadState(i) = Task.Run(AddressOf HashValueCalculationThread.ThreadWork)
-                    Catch ex As Exception
+            If ComboBox1.SelectedIndex = 0 Then
+                For i = 0 To HandleCount
+                    If File.Exists(FolderPath + HandleData(i)) = False Then
                         Hash_Data(i) = "Error_" + CStr(i + 1)
-                        ListBox4.Items.Add(Now + "错误:文件" + HandleData(i) + "程序没有读取权限,无法计算SHA1校验值")
+                        ListBox4.Items.Add(Now + "错误:文件" + HandleData(i) + "文件路径获取失败,文件不存在")
                         ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
-                    End Try
-                End If
-            Next i
-            Try
-                Task.WaitAll(ThreadState)
-            Catch ex As Exception
-                ListBox4.Items.Add(Now + "错误:等待全部线程完成失败,程序中止")
+                    Else
+                        Try
+                            Dim HashValueCalculationThread As New HashValueCalculation With {
+                                .sn = i,
+                                .sn_filestream = File.Open(FolderPath + HandleData(i), FileMode.Open, FileAccess.Read, FileShare.Read)
+                            }
+                            HashValueCalculationArray(i) = HashValueCalculationThread
+                            Call HashValueCalculationThread.ThreadWork()
+                        Catch ex As Exception
+                            Hash_Data(i) = "Error_" + CStr(i + 1)
+                            ListBox4.Items.Add(Now + "错误:文件" + HandleData(i) + "程序没有读取权限,无法计算SHA1校验值")
+                            ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
+                        End Try
+                    End If
+                Next i
+            ElseIf ComboBox1.SelectedIndex = 1 Then
+                Dim ThreadState() As Task = New Task(HandleCount) {}
+                For i = 0 To HandleCount
+                    If File.Exists(FolderPath + HandleData(i)) = False Then
+                        Hash_Data(i) = "Error_" + CStr(i + 1)
+                        ListBox4.Items.Add(Now + "错误:文件" + HandleData(i) + "文件路径获取失败,文件不存在")
+                        ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
+                    Else
+                        Try
+                            Dim HashValueCalculationThread As New HashValueCalculation With {
+                                .sn = i,
+                                .sn_filestream = File.Open(FolderPath + HandleData(i), FileMode.Open, FileAccess.Read, FileShare.Read)
+                            }
+                            HashValueCalculationArray(i) = HashValueCalculationThread
+                            ThreadState(i) = Task.Run(AddressOf HashValueCalculationThread.ThreadWork)
+                        Catch ex As Exception
+                            Hash_Data(i) = "Error_" + CStr(i + 1)
+                            ListBox4.Items.Add(Now + "错误:文件" + HandleData(i) + "程序没有读取权限,无法计算SHA1校验值")
+                            ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
+                        End Try
+                    End If
+                Next i
+                Try
+                    Task.WaitAll(ThreadState)
+                Catch ex As Exception
+                    ListBox4.Items.Add(Now + "错误:等待全部线程完成失败,程序中止")
+                    ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
+                    MsgBox("错误:等待全部线程完成失败,程序中止", 0 + vbCritical + vbSystemModal, "等待全部线程完成失败")
+                    Exit Sub
+                End Try
+            Else
+                ListBox4.Items.Add(Now + "错误:选择SHA1校验值计算模式错误,程序中止")
                 ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
-                MsgBox("错误:等待全部线程完成失败,程序中止", 0 + vbCritical + vbSystemModal, "等待全部线程完成失败")
+                MsgBox("错误:选择SHA1校验值计算模式错误,程序中止", 0 + vbCritical + vbSystemModal, "选择SHA1校验值计算模式错误")
                 Exit Sub
-            End Try
+            End If
             ListBox3.Items.Add(Now + "|第二轮查重对比数据(SHA1校验值)列表如下:")
             For i = 0 To HandleCount
                 Hash_Data(i) = HashValueCalculationArray(i).sn_hashresult
@@ -427,6 +460,7 @@ Public Class Form1
             MsgBox("未找到重复文件", 0 + vbInformation + vbSystemModal, "查重")
             Button3.Enabled = False
         End If
+        ComboBox1.Enabled = True
         For i = 0 To UppLim - 1
             Hash_Data(i) = ""
             Output(i) = ""
@@ -472,6 +506,7 @@ Public Class Form1
                 Button4.Enabled = False
                 Button5.Enabled = False
                 Button6.Enabled = False
+                ComboBox1.Enabled = False
                 ListBox4.Items.Add(Now + "已选择是,开始进行重复文件分组移动")
                 ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
                 If Boo_DirExist(MovePath) = 0 Then
@@ -636,6 +671,7 @@ Public Class Form1
         Button4.Enabled = False
         Button5.Enabled = False
         Button6.Enabled = False
+        ComboBox1.Enabled = False
         ListBox4.Items.Add(Now + "开始选择保留文件")
         ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
         Form2.Show()
@@ -652,6 +688,7 @@ Public Class Form1
             Button4.Enabled = False
             Button5.Enabled = False
             Button6.Enabled = False
+            ComboBox1.Enabled = False
             IgnFlag = False
             ListBox4.Items.Add(Now + "已选择是,开始批量删除重复文件")
             ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
@@ -723,6 +760,7 @@ Public Class Form1
                 Button3.Enabled = True
                 Button4.Enabled = True
                 Button5.Enabled = True
+                ComboBox1.Enabled = True
             End If
         Else
             ListBox4.Items.Add(Now + "已选择否,重复文件删除操作已终止")
@@ -779,37 +817,6 @@ Public Class Form1
         ListBox4.Items.Add(Now + "导出文本文档的完整路径与文件名为:" + OutputPath + FolderTime)
         ListBox4.SelectedItem = ListBox4.Items(ListBox4.Items.Count - 1)
         Button7.Enabled = True
-    End Sub
-    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
-        MsgBox("1.点击<打开文件夹>按钮,在弹出的对话框中选择需要查重文件的根文件夹路径(该文件夹路径不能嵌套程序所在文件夹或与程序所在文件夹相同)" +
-                    vbCrLf + vbCrLf + "2.点击<获取文件列表>按钮,程序会导入该文件夹下的全部文件名并在左侧列表(最多可导入一百万个文件)" +
-                    vbCrLf + vbCrLf + "3.点击<文件查重>按钮,程序会进行两轮查重.第一轮文件大小查重的数据和重复情况将在中间列表.第二轮文件SHA1值查重的数据和重复情况将在右侧列表" +
-                    vbCrLf + vbCrLf + "4.点击<移动重复文件>按钮,在弹出的对话框中指定移动的文件夹路径,点击确定后程序会根据第二轮查重结果分组移动全部重复文件至选择的文件夹路径下以移动开始时间命名的文件夹中" +
-                    vbCrLf + vbCrLf + "5.点击<选择保留文件>按钮,在弹出的新界面中为每一组重复文件选择保留某一文件(若某组未选择,则默认保留该组第一个)" + vbCrLf + "  注意:每次进入选择保留文件界面时会清除上一次的保留结果" +
-                    vbCrLf + vbCrLf + "  对于高级筛选功能:需要勾选<启用高级筛选>的复选框后才能勾选需要的高级筛选功能,文件夹筛选功能和文件名筛选功能可以分别单独使用,也可以同时使用(同时使用时筛选结果取二者交集)" +
-                    vbCrLf + vbCrLf + "  对于文件夹筛选功能:启用文件夹筛选后,在右中侧复选列表框中勾选需要保留的文件夹(可灵活使用<反选>和<全选>按钮),程序将更新筛选状态,再次进行选择时将以新的选择状态呈现(若某组无可选项,将以<本组筛选后无重复文件>显示)" +
-                    vbCrLf + vbCrLf + "  对于文件名筛选功能:启用文件名筛选后,在右下侧三个复合框内选择需要的文件名筛选方式,再在对应的右侧文本框中键入关键词(在<不启用此项>状态或其他两种启用状态却不键入关键词时,该条规则无效,筛选的文件名取三条规则的交集),程序将更新筛选状态,再次进行选择时将以新的选择状态呈现(若某组无可选项,将以<本组筛选后无重复文件>显示)" +
-                    vbCrLf + vbCrLf + "6.点击<批量删除重复>按钮,程序会根据第二轮查重结果及用户筛选和选择保留情况批量删除除标记之外的全部重复文件至系统回收站(若某组为<本组筛选后无重复文件>,则该组所有文件均不删除)" +
-                    vbCrLf + vbCrLf + "7.点击<导出查重结果>按钮,在弹出的对话框中指定导出查重结果的文件夹路径,点击确定后程序会将三个列表完整导出至指定文件夹路径下以导出开始时间命名的文本文档中" +
-                    vbCrLf + vbCrLf + "8.当程序出现错误时,程序会弹出错误处理对话框,请用户根据对话框提示操作" +
-                    vbCrLf + vbCrLf + "9.用户和程序的所有主要操作均可在主界面最下方的状态栏查看", 0 + vbInformation + vbSystemModal, "程序使用说明")
-    End Sub
-    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
-        MsgBox("当前程序版本:文件查重V2.0.0" + vbCrLf + "本程序仅且只可用于学习交流,禁止用于任何商业及违法用途", 0 + vbInformation + vbSystemModal, "关于文件查重")
-    End Sub
-    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
-        MsgBox("V2.0.0" + vbCrLf + "修复当文件大小大于2147483591字节时无法进行SHA1校验值计算的问题" + vbCrLf + "修复在某些情况下选择保留文件界面出现逻辑交互异常问题" + vbCrLf + "使用多线程技术重写SHA1校验值计算过程,大幅提高程序运行效率" + vbCrLf + "修改部分文字说明" +
-                    vbCrLf + vbCrLf + "V1.9.1" + vbCrLf + "修复在部分情况下删除重复文件的计数出现错误的问题" +
-                    vbCrLf + vbCrLf + "V1.9.0" + vbCrLf + "在选择保留文件界面新增两种高级筛选模式:文件夹筛选和文件名筛选" +
-                    vbCrLf + vbCrLf + "V1.8.1" + vbCrLf + "新增遍历搜索文件夹内含全部子文件夹及其全部递归子文件夹的功能" + vbCrLf + "优化了读取文件名和导入文件名的速度" + vbCrLf + "新增移动重复文件出现文件名重复时在文件末尾自动添加序号的功能" + vbCrLf + "文件最大导入数量增加至一百万个" + vbCrLf + "对大量文字说明进行微改" +
-                    vbCrLf + vbCrLf + "V1.7.4" + vbCrLf + "修复移动重复文件功能生成的文件夹名称为12小时制时间的问题" + vbCrLf + "修改部分文字说明" + vbCrLf + "优化部分操作逻辑" + vbCrLf + "新增导出查重结果功能" +
-                    vbCrLf + vbCrLf + "V1.7.3" + vbCrLf + "修复用户操作中可能导致的显示错误" +
-                    vbCrLf + vbCrLf + "V1.7.2" + vbCrLf + "优化选择保留文件操作逻辑" + vbCrLf + "为选择保留文件窗体列表框添加水平滚动条" + vbCrLf + "修改实时状态栏始终显示最新一行" +
-                    vbCrLf + vbCrLf + "V1.7.0" + vbCrLf + "新增在批量删除重复文件前每组可自由选择保留某个文件的选项" +
-                    vbCrLf + vbCrLf + "V1.6.0" + vbCrLf + "程序编写环境由Visual Basic 6.0移动至VB.NET" + vbCrLf + "代码和界面全部重写,优化程序运行响应速度、稳定性和容错率" + vbCrLf + "修改打开文件夹方式,合并两次查重过程,优化程序操作逻辑" + vbCrLf + "新增分组移动全部重复文件功能" + vbCrLf + "新增删除全部重复文件功能" + vbCrLf + "新增实时状态栏功能" +
-                    vbCrLf + vbCrLf + "V1.5.1" + vbCrLf + "修复V1.5.0版本移动重复文件发生文件移动不完全或文件破损问题" +
-                    vbCrLf + vbCrLf + "V1.5.0" + vbCrLf + "新增文件大小查重功能" + vbCrLf + "新增移动全部重复文件功能" +
-                    vbCrLf + vbCrLf + "V1.0.0" + vbCrLf + "初代版本", 0 + vbInformation + vbSystemModal, "程序更新日志")
     End Sub
     Private Shared Function Boo_DirExist(StrPath As String) As Boolean
         Boo_DirExist = Directory.Exists(StrPath)
