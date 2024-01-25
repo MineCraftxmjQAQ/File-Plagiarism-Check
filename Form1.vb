@@ -446,6 +446,7 @@ Public Class Form1
                 Button5.Enabled = True
                 Button6.Enabled = False
                 Button7.Enabled = True
+                ComboBox1.Enabled = True
             Else
                 ListBox3.Items.Add("未找到重复文件")
                 ListBox4.Items.Add(Now + "未找到重复文件")
@@ -460,7 +461,6 @@ Public Class Form1
             MsgBox("未找到重复文件", 0 + vbInformation + vbSystemModal, "查重")
             Button3.Enabled = False
         End If
-        ComboBox1.Enabled = True
         For i = 0 To UppLim - 1
             Hash_Data(i) = ""
             Output(i) = ""
